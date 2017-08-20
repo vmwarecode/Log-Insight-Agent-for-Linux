@@ -1,0 +1,88 @@
+'@type': "SoftwareComponentType"
+createdDate: "2017-05-07T13:00:23.940Z"
+lastUpdated: "2017-05-07T13:00:24.067Z"
+id: "Software.LILinuxAgent"
+name: "Log Insight Linux Agent"
+description: "Installs the Log Insight agent for Linux using RPM format, and sets\
+  \ the server to your Log Insight cluster name."
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "serverhost"
+    label: "serverhost"
+    description: "Location of the Log Insight server"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "derivedValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "loginsight.domain.com"
+    isMultiValued: false
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "internal"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2017-05-07T13:00:23.944Z"
+  lastUpdated: "2017-08-20T00:47:18.147Z"
+  script:
+    scriptContent: "#! /bin/bash\ncurl -k -o /tmp/liagent.rpm https://$serverhost/api/v1/agent/packages/types/rpm\n\
+      SERVERHOST=$serverhost rpm -i /tmp/liagent.rpm\n######Check if service is actually\
+      \ running.\nSERVICE='liagent'\nif ps ax | grep -v grep | grep $SERVICE > /dev/null\n\
+      then\n    echo \"$SERVICE service is running.\"\n    rm -f /tmp/liagent.rpm\n\
+      \    exit 0\nelse\n    echo \"$SERVICE service is not running.\"\n    exit 1\n\
+      fi"
+    isRebootAfter: false
+    scriptTypeId: "Bash"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"
+- createdDate: "2017-05-07T13:00:23.944Z"
+  lastUpdated: "2017-08-20T00:47:18.147Z"
+  script:
+    scriptContent: "#! /bin/bash\n#rpm -e $(rpm -qa 'VMware-Log-Insight*')"
+    isRebootAfter: false
+    scriptTypeId: "Bash"
+  taskDescriptorRef:
+    id: "TEARDOWN"
+    label: "Uninstall"

@@ -1,0 +1,8 @@
+name: "auto-generated-pkg-4c82448c-c28b-42da-957f-a63dab749cdb"
+productVersion: "7.3.0-SNAPSHOT"
+data:
+- locator: "software-component/Software.LILinuxAgent.yaml"
+  name: "Log Insight Linux Agent"
+  description: "Installs the Log Insight agent for Linux using RPM format, and sets\
+    \ the server to your Log Insight cluster name."
+exportTime: "2017-08-20T01:39:26.419Z"
